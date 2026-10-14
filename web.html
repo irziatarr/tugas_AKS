@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Prediksi Penjualan - Irzi Atarr Denanta</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans (Sans-Serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Data Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            900: '#111827',
+                            800: '#1B2545',
+                            700: '#212D52',
+                            600: '#2C3A66',
+                            500: '#3D4D75'
+                        },
+                        cream: {
+                            50: '#FAF8F5',
+                            100: '#FAF6F0',
+                            200: '#F4EFEA',
+                            300: '#E8DFC8',
+                            400: '#D2C4A7'
+                        },
+                        gold: {
+                            400: '#E0B138',
+                            500: '#C59B27',
+                            600: '#A6801C',
+                            700: '#876613'
+                        },
+                        borderAccent: '#E2D9CF'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F4EFEA;
+            color: #1B2545;
+        }
+        
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F4EFEA;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3D4D75;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1B2545;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2D9CF;
+        }
+
+        .dark-glass-card {
+            background: rgba(27, 37, 69, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(197, 155, 39, 0.2);
+        }
+
+        .active-tab {
+            border-bottom: 2px solid #C59B27;
+            color: #1B2545;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-white">
+
+    <!-- Top Fixed Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-navy-800 border-b border-navy-600 text-cream-100 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 border-2 border-gold-500 flex items-center justify-center font-serif-title font-bold text-xl text-gold-500 rounded bg-navy-900 shadow-inner">
+                        P
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-wider font-serif-title uppercase text-cream-50 block leading-tight">PREDIKSI<span class="text-gold-500">.IO</span></span>
+                        <span class="text-[10px] tracking-widest text-cream-300 uppercase block font-semibold">Sistem Prediksi Penjualan</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8 text-xs font-semibold tracking-wider uppercase">
+                    <a href="#beranda" class="text-cream-200 hover:text-gold-500 transition-colors">Beranda</a>
+                    <a href="#masalah" class="text-cream-200 hover:text-gold-500 transition-colors">Masalah & 5 Whys</a>
+                    <a href="#metode" class="text-cream-200 hover:text-gold-500 transition-colors">Metode Regresi</a>
+                    <a href="#simulasi" class="text-cream-200 hover:text-gold-500 transition-colors">Kalkulator Prediksi</a>
+                    <a href="#rancangan" class="text-cream-200 hover:text-gold-500 transition-colors">Rancangan & Kebutuhan</a>
+                    <a href="#dampak" class="text-cream-200 hover:text-gold-500 transition-colors">Dampak</a>
+                </div>
+
+                <!-- Author Badge -->
+                <div class="hidden lg:flex items-center space-x-3 bg-navy-900/60 px-3 py-1.5 rounded-lg border border-gold-500/30">
+                    <div class="w-7 h-7 rounded-full bg-gold-500 text-navy-900 flex items-center justify-center font-bold text-xs">
+                        ID
+                    </div>
+                    <div class="text-left text-xs">
+                        <div class="text-cream-50 font-bold leading-tight">Irzi Atarr Denanta</div>
+                        <div class="text-[10px] text-gold-400">NPM: 29411007</div>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-cream-100 hover:text-gold-500 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-navy-900 border-b border-navy-700 px-4 pt-2 pb-6 space-y-3">
+            <a href="#beranda" class="block text-cream-200 hover:text-gold-500 py-1 text-sm uppercase tracking-wider font-semibold">Beranda</a>
+            <a href="#masalah" class="block text-cream-200 hover:text-gold-500 py-1 text-sm uppercase tracking-wider font-semibold">Masalah & 5 Whys</a>
+            <a href="#metode" class="block text-cream-200 hover:text-gold-500 py-1 text-sm uppercase tracking-wider font-semibold">Metode Regresi</a>
+            <a href="#simulasi" class="block text-cream-200 hover:text-gold-500 py-1 text-sm uppercase tracking-wider font-semibold">Kalkulator Prediksi</a>
+            <a href="#rancangan" class="block text-cream-200 hover:text-gold-500 py-1 text-sm uppercase tracking-wider font-semibold">Rancangan & Kebutuhan</a>
+            <a href="#dampak" class="block text-cream-200 hover:text-gold-500 py-1 text-sm uppercase tracking-wider font-semibold">Dampak</a>
+            <div class="pt-3 border-t border-navy-700 flex items-center space-x-3">
+                <div class="text-xs text-cream-300">
+                    <p class="font-bold text-cream-50">Irzi Atarr Denanta</p>
+                    <p class="text-gold-400">NPM: 29411007 - Tugas Individu AKS</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION: Split Screen Layout (Dark Left, Light Cream Right) -->
+    <section id="beranda" class="relative w-full overflow-hidden bg-cream-200">
+        <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-80px)]">
+            
+            <!-- Left Panel (Dark Deep Navy Background) -->
+            <div class="lg:col-span-6 bg-navy-800 text-cream-50 p-8 sm:p-12 lg:p-16 flex flex-col justify-between relative">
+                <!-- Background Geometric Pattern -->
+                <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#C59B27_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+
+                <div class="relative z-10 space-y-6 max-w-xl my-auto">
+                    <!-- Badge Header -->
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded bg-navy-900/80 border border-gold-500/40 text-gold-400 text-xs tracking-widest uppercase font-semibold">
+                        <i class="fa-solid fa-chart-line text-gold-500"></i>
+                        <span>Scholar Inspired System Architecture</span>
+                    </div>
+
+                    <!-- Main Headline -->
+                    <h1 class="text-4xl sm:text-5xl xl:text-6xl font-serif-title font-bold leading-tight text-cream-50">
+                        Prediksi Kebutuhan Stok Berbasis Data Historis.
+                    </h1>
+
+                    <!-- Description -->
+                    <p class="text-cream-300 text-base sm:text-lg font-light leading-relaxed">
+                        Platform rekomendasi dan <span class="text-gold-400 font-semibold">Forecasting Penjualan UMKM</span> secara terstruktur, terkomputerisasi, dan presisi menggunakan pendekatan algoritma <span class="italic underline underline-offset-4 decoration-gold-500">Regression</span>.
+                    </p>
+
+                    <!-- Key Selling Point Badges -->
+                    <div class="grid grid-cols-2 gap-3 pt-2 text-xs text-cream-200">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-circle-check text-gold-500"></i>
+                            <span>Cegah Overstock & Understock</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-circle-check text-gold-500"></i>
+                            <span>Otomatisasi Analisis Tren</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-circle-check text-gold-500"></i>
+                            <span>Data-Driven Decision</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-circle-check text-gold-500"></i>
+                            <span>Akurasi Tinggi berbasis Data</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6">
+                        <a href="#simulasi" class="inline-flex items-center justify-center px-6 py-3.5 bg-gold-500 hover:bg-gold-600 text-navy-900 font-bold text-sm tracking-wide rounded transition shadow-lg hover:shadow-gold-500/20 uppercase">
+                            <i class="fa-solid fa-calculator mr-2"></i> Coba Simulasi Prediksi
+                        </a>
+                        <a href="#masalah" class="inline-flex items-center justify-center px-6 py-3.5 bg-navy-900 hover:bg-navy-700 text-cream-100 border border-cream-400/30 font-semibold text-sm tracking-wide rounded transition uppercase">
+                            Pelajari Studi Kasus <i class="fa-solid fa-arrow-right ml-2 text-gold-400"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Author Footer inside Left Panel -->
+                <div class="relative z-10 pt-10 border-t border-navy-700 text-xs text-cream-400 flex flex-wrap justify-between items-center gap-2">
+                    <div>
+                        <span class="block font-semibold text-cream-200">SISTEM PREDIKSI PENJUALAN</span>
+                        <span>Tugas Individu AKS • Demo Prototype</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-gold-400 font-mono font-bold">Irzi Atarr Denanta</span>
+                        <span class="block text-[11px] text-cream-300">NPM: 29411007</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel (Warm Light Cream Dashboard Preview Layout) -->
+            <div class="lg:col-span-6 bg-cream-100 p-8 sm:p-12 lg:p-16 flex flex-col justify-center items-center relative border-l border-borderAccent">
+                
+                <div class="w-full max-w-lg space-y-6">
+                    <!-- Top Widget Header -->
+                    <div class="flex justify-between items-end pb-3 border-b border-borderAccent">
+                        <div>
+                            <span class="text-xs uppercase tracking-widest text-navy-500 font-bold">Ringkasan Sistem</span>
+                            <h2 class="text-2xl font-serif-title font-bold text-navy-800">Dashboard Prediksi Stok</h2>
+                        </div>
+                        <span class="px-2.5 py-1 text-xs font-semibold rounded bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Mode Aktif
+                        </span>
+                    </div>
+
+                    <!-- Metric Cards 2x2 Grid -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-5 rounded-lg border border-borderAccent shadow-sm hover:shadow-md transition">
+                            <div class="flex items-center justify-between text-navy-500 mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider">Akurasi Prediksi</span>
+                                <i class="fa-solid fa-bullseye text-gold-500"></i>
+                            </div>
+                            <div class="text-3xl font-serif-title font-bold text-navy-800">94.8%</div>
+                            <span class="text-[11px] text-emerald-600 font-medium mt-1 inline-block"><i class="fa-solid fa-arrow-trend-up"></i> Berbasis Regresi Linier</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-lg border border-borderAccent shadow-sm hover:shadow-md transition">
+                            <div class="flex items-center justify-between text-navy-500 mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider">Risiko Overstock</span>
+                                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                            </div>
+                            <div class="text-3xl font-serif-title font-bold text-emerald-700">-85%</div>
+                            <span class="text-[11px] text-navy-500 mt-1 inline-block">Penurunan Efisiensi Biaya</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-lg border border-borderAccent shadow-sm hover:shadow-md transition">
+                            <div class="flex items-center justify-between text-navy-500 mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider">Proyeksi Restock</span>
+                                <i class="fa-solid fa-boxes-stacked text-navy-600"></i>
+                            </div>
+                            <div class="text-3xl font-serif-title font-bold text-navy-800">185 Unit</div>
+                            <span class="text-[11px] text-gold-600 font-medium mt-1 inline-block">Rekomendasi Otomatis</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-lg border border-borderAccent shadow-sm hover:shadow-md transition">
+                            <div class="flex items-center justify-between text-navy-500 mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider">Estimasi Omzet</span>
+                                <i class="fa-solid fa-arrow-up-right-dots text-emerald-600"></i>
+                            </div>
+                            <div class="text-3xl font-serif-title font-bold text-navy-800">+24.5%</div>
+                            <span class="text-[11px] text-emerald-600 font-medium mt-1 inline-block">Peningkatan Potensi</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Mini Chart Preview Widget -->
+                    <div class="bg-white p-5 rounded-lg border border-borderAccent shadow-sm space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold uppercase tracking-wider text-navy-700">Grafik Pola Tren Penjualan</span>
+                            <span class="text-xs text-gold-600 font-bold bg-cream-100 px-2 py-0.5 rounded">Tren Naik (Positive)</span>
+                        </div>
+                        <div class="h-44 w-full">
+                            <canvas id="heroMiniChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quick Callout -->
+                    <div class="p-4 rounded-lg bg-navy-800 text-cream-100 flex items-center justify-between">
+                        <div class="text-xs">
+                            <p class="font-bold text-gold-400">Uji Coba Langsung dengan Data UMKM Anda</p>
+                            <p class="text-cream-300">Gunakan simulator kalkulator regresi interaktif di bawah.</p>
+                        </div>
+                        <a href="#simulasi" class="text-xs bg-gold-500 hover:bg-gold-600 text-navy-900 font-bold px-3 py-2 rounded uppercase tracking-wider transition whitespace-nowrap">
+                            Mulai <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: KONDISI SAAT INI & IDENTIFIKASI MASALAH UTAMA -->
+    <section id="masalah" class="py-20 bg-cream-100 border-t border-borderAccent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Header -->
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-gold-600 bg-gold-500/10 px-3 py-1 rounded border border-gold-500/20">Latar Belakang & Permasalahan</span>
+                <h2 class="text-3xl sm:text-4xl font-serif-title font-bold text-navy-800 mt-3 mb-4">
+                    Kondisi Aktual vs Kondisi Ideal UMKM
+                </h2>
+                <p class="text-navy-600 text-base leading-relaxed">
+                    Banyak Usaha Mikro, Kecil, dan Menengah (UMKM) masih kesulitan memperkirakan stok barang secara akurat, berdampak langsung pada kerugian finansial dan ketidakefisienan operasional.
+                </p>
+            </div>
+
+            <!-- Comparison Cards Grid (Kondisi Aktual vs Ideal) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                
+                <!-- Card 1: Kondisi Aktual -->
+                <div class="bg-white rounded-xl p-8 border-2 border-red-200 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold uppercase px-4 py-1 rounded-bl">
+                        Kondisi Aktual (Masalah)
+                    </div>
+                    <div class="w-12 h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif-title font-bold text-navy-800 mb-3">Penentuan Stok Berbasis Insting</h3>
+                    <p class="text-navy-600 text-sm leading-relaxed mb-6">
+                        Tanpa perhitungan matematis, pemilik UMKM sering menebak kebutuhan barang. Akibatnya timbul dua masalah ekstrem:
+                    </p>
+                    
+                    <ul class="space-y-3 text-sm text-navy-700">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-xmark text-red-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-red-700">Penumpukan Barang (Overstock):</strong> Modalkerja tertahan pada produk yang tidak laku, barang berisiko rusak/kedaluwarsa.
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-xmark text-red-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-red-700">Kehabisan Barang (Understock):</strong> Kehilangan potensi pembeli saat permintaan melonjak tinggi, pelanggan kecewa.
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="mt-6 pt-4 border-t border-gray-100 bg-red-50/50 p-4 rounded-lg">
+                        <span class="text-xs font-bold text-red-800 uppercase block mb-1">Visual Gudang Berantakan (Messy Warehouse)</span>
+                        <p class="text-xs text-red-600 italic">Ketiadaan data membuat rotasi stok tidak terkontrol dan membebani ruang penyimpanan.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Kondisi Ideal -->
+                <div class="bg-white rounded-xl p-8 border-2 border-emerald-300 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-bold uppercase px-4 py-1 rounded-bl">
+                        Kondisi Ideal (Solusi)
+                    </div>
+                    <div class="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-warehouse"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif-title font-bold text-navy-800 mb-3">Proyeksi Permintaan Presisi</h3>
+                    <p class="text-navy-600 text-sm leading-relaxed mb-6">
+                        UMKM dapat mengetahui estimasi kebutuhan pasar masa depan berbasis pola data numerik riwayat transaksi sebelumnya.
+                    </p>
+                    
+                    <ul class="space-y-3 text-sm text-navy-700">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check text-emerald-600 mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-emerald-800">Jumlah Stok Selalu Pas:</strong> Mengoptimalkan biaya pengadaan stok barang agar sesuai daya serap pasar.
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check text-emerald-600 mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-emerald-800">Gudang Terorganisir (Organized Warehouse):</strong> Efisiensi tata letak barang dan kelancaran alur pasokan barang.
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="mt-6 pt-4 border-t border-gray-100 bg-emerald-50/50 p-4 rounded-lg">
+                        <span class="text-xs font-bold text-emerald-800 uppercase block mb-1">Efisiensi Maksimal</span>
+                        <p class="text-xs text-emerald-700 italic">Pengambilan keputusan pengadaan barang menjadi terukur, otomatis, dan minim risiko.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Identifikasi Masalah & Stakeholder Terdampak -->
+            <div class="bg-navy-800 rounded-xl p-8 text-cream-50 shadow-xl border border-gold-500/30">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <div class="lg:col-span-7 space-y-4">
+                        <span class="text-xs uppercase tracking-widest text-gold-400 font-bold">Identifikasi Masalah Utama</span>
+                        <h3 class="text-2xl sm:text-3xl font-serif-title font-bold text-cream-50">
+                            Belum Ada Sistem Terkomputerisasi Mengolah Data Historis
+                        </h3>
+                        <p class="text-cream-300 text-sm leading-relaxed">
+                            Akar kerugian UMKM bukan terletak pada tidak adanya data, melainkan <span class="text-gold-400 font-semibold">data catatan transaksi harian hanya menumpuk secara manual</span> tanpa dimanfaatkan untuk forecasting matematis.
+                        </p>
+
+                        <div class="pt-2">
+                            <h4 class="text-xs font-bold text-gold-400 uppercase tracking-wider mb-2">Dampak Negatif Utama:</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-navy-900 text-cream-200 border border-navy-600 px-3 py-1 rounded text-xs">Kerugian Finansial Produk Ruak</span>
+                                <span class="bg-navy-900 text-cream-200 border border-navy-600 px-3 py-1 rounded text-xs">Hilangnya Potensi Keuntungan</span>
+                                <span class="bg-navy-900 text-cream-200 border border-navy-600 px-3 py-1 rounded text-xs">Penurunan Kepuasan Pelanggan</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stakeholders Grid -->
+                    <div class="lg:col-span-5 bg-navy-900/80 p-6 rounded-lg border border-navy-700 space-y-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-gold-400 border-b border-navy-700 pb-2">
+                            Stakeholder Terdampak
+                        </h4>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded bg-gold-500/20 text-gold-400 flex items-center justify-center font-bold text-sm">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-cream-100">Pemilik UMKM</p>
+                                    <p class="text-[11px] text-cream-400">Kehilangan margin laba dan kepastian modal</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded bg-gold-500/20 text-gold-400 flex items-center justify-center font-bold text-sm">
+                                    <i class="fa-solid fa-boxes-stacked"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-cream-100">Staf Gudang</p>
+                                    <p class="text-[11px] text-cream-400">Kesulitan manajemen penataan dan pencatatan stok</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded bg-gold-500/20 text-gold-400 flex items-center justify-center font-bold text-sm">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-cream-100">Pelanggan</p>
+                                    <p class="text-[11px] text-cream-400">Kecewa karena produk yang dicari sering habis</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: ANALISIS 5 WHYS -->
+    <section class="py-20 bg-cream-200 border-t border-borderAccent">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-gold-600 bg-gold-500/10 px-3 py-1 rounded border border-gold-500/20">Metodologi Pemecahan Masalah</span>
+                <h2 class="text-3xl sm:text-4xl font-serif-title font-bold text-navy-800 mt-3 mb-4">
+                    Analisis 5 Whys (Pencarian Akar Masalah)
+                </h2>
+                <p class="text-navy-600 text-sm sm:text-base">
+                    Mengupas secara bertahap hingga menemukan penyebab mendasar kenapa pengelolaan stok UMKM kerap mengalami kesalahan.
+                </p>
+            </div>
+
+            <!-- 5 Whys Accordion Vertical Stepper -->
+            <div class="space-y-4">
+                
+                <!-- Why 1 -->
+                <div class="bg-white rounded-lg p-5 border border-borderAccent shadow-sm hover:border-gold-500 transition">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-9 h-9 rounded-full bg-navy-800 text-gold-400 font-serif-title font-bold flex items-center justify-center flex-shrink-0">
+                            1
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">Pertanyaan & Jawaban #1</span>
+                            <h3 class="text-lg font-bold text-navy-800 mt-0.5">Kenapa stok sering salah?</h3>
+                            <p class="text-sm text-navy-600 mt-1">
+                                <i class="fa-solid fa-arrow-right text-gold-500 mr-1"></i> Karena UMKM tidak mengetahui estimasi penjualan produk untuk periode berikutnya secara akurat.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why 2 -->
+                <div class="bg-white rounded-lg p-5 border border-borderAccent shadow-sm hover:border-gold-500 transition">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-9 h-9 rounded-full bg-navy-800 text-gold-400 font-serif-title font-bold flex items-center justify-center flex-shrink-0">
+                            2
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">Pertanyaan & Jawaban #2</span>
+                            <h3 class="text-lg font-bold text-navy-800 mt-0.5">Kenapa tidak tahu estimasi?</h3>
+                            <p class="text-sm text-navy-600 mt-1">
+                                <i class="fa-solid fa-arrow-right text-gold-500 mr-1"></i> Karena pengadaan stok hanya mengandalkan insting, perkiraan kasar, dan tebakan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why 3 -->
+                <div class="bg-white rounded-lg p-5 border border-borderAccent shadow-sm hover:border-gold-500 transition">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-9 h-9 rounded-full bg-navy-800 text-gold-400 font-serif-title font-bold flex items-center justify-center flex-shrink-0">
+                            3
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">Pertanyaan & Jawaban #3</span>
+                            <h3 class="text-lg font-bold text-navy-800 mt-0.5">Kenapa pakai insting?</h3>
+                            <p class="text-sm text-navy-600 mt-1">
+                                <i class="fa-solid fa-arrow-right text-gold-500 mr-1"></i> Karena tidak ada rumus perhitungan matematis berbasis tren penjualan yang diterapkan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why 4 -->
+                <div class="bg-white rounded-lg p-5 border border-borderAccent shadow-sm hover:border-gold-500 transition">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-9 h-9 rounded-full bg-navy-800 text-gold-400 font-serif-title font-bold flex items-center justify-center flex-shrink-0">
+                            4
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">Pertanyaan & Jawaban #4</span>
+                            <h3 class="text-lg font-bold text-navy-800 mt-0.5">Kenapa tidak dihitung?</h3>
+                            <p class="text-sm text-navy-600 mt-1">
+                                <i class="fa-solid fa-arrow-right text-gold-500 mr-1"></i> Karena data riwayat transaksi penjualan historis belum diolah secara terstruktur.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why 5: Root Cause -->
+                <div class="bg-navy-800 text-cream-50 rounded-lg p-6 border-2 border-gold-500 shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-gold-500 text-navy-900 font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-bl">
+                        Akar Masalah Mendasar
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded-full bg-gold-500 text-navy-900 font-serif-title font-bold flex items-center justify-center text-xl flex-shrink-0">
+                            5
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-xs font-bold text-gold-400 uppercase tracking-wider">Akar Masalah (Root Cause)</span>
+                            <h3 class="text-xl font-serif-title font-bold text-cream-50 mt-1">
+                                Tidak ada sistem yang memanfaatkan data riwayat transaksi untuk forecasting.
+                            </h3>
+                            <p class="text-sm text-cream-300 mt-2 leading-relaxed">
+                                Solusinya adalah membangun <strong class="text-gold-400">Sistem Prediksi Penjualan Berbasis Algoritma Regresi</strong> untuk mengkonversi data transaksi manual menjadi keputusan restock otomatis.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 4: DATA, TUJUAN & METODE ALGORITMA REGREGATION -->
+    <section id="metode" class="py-20 bg-cream-100 border-t border-borderAccent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left: Algoritma Regression Card -->
+                <div class="lg:col-span-6 space-y-6">
+                    <span class="text-xs font-bold uppercase tracking-widest text-gold-600 bg-gold-500/10 px-3 py-1 rounded border border-gold-500/20">Metode & Formulasi</span>
+                    <h2 class="text-3xl sm:text-4xl font-serif-title font-bold text-navy-800">
+                        Metode Algoritma Regression untuk Forecasting
+                    </h2>
+                    <p class="text-navy-600 text-base leading-relaxed">
+                        Algoritma <strong class="text-navy-800">Regression (Regresi Linier)</strong> dipilih karena sangat presisi untuk memprediksi nilai numerik di masa depan berdasarkan tren hubungan variabel waktu dan jumlah terjual di masa lalu.
+                    </p>
+
+                    <!-- Formula Box -->
+                    <div class="bg-white p-6 rounded-xl border border-borderAccent shadow-sm space-y-3">
+                        <div class="text-xs uppercase tracking-wider text-navy-500 font-bold">Persamaan Regresi Linier Utama</div>
+                        <div class="text-3xl font-serif-title font-bold text-navy-800 bg-cream-200 p-4 rounded text-center border border-borderAccent text-gold-600 tracking-wider">
+                            Y = a + b(X)
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-navy-600 pt-2 border-t border-gray-100">
+                            <div><strong class="text-navy-800">Y:</strong> Prediksi Jumlah Penjualan</div>
+                            <div><strong class="text-navy-800">X:</strong> Periode Waktu / Bulan</div>
+                            <div><strong class="text-navy-800">a:</strong> Intercept (Konstanta)</div>
+                            <div><strong class="text-navy-800">b:</strong> Slope (Kemiringan Tren)</div>
+                        </div>
+                    </div>
+
+                    <!-- Why Regression? Benefits -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-navy-800 uppercase tracking-wider">Alasan Pemilihan Algoritma Regresi:</h4>
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-check-double text-gold-500 mt-1"></i>
+                            <p class="text-xs text-navy-600">Sangat efektif mengolah pola tren kenaikan atau penurunan angka penjualan historis.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-check-double text-gold-500 mt-1"></i>
+                            <p class="text-xs text-navy-600">Komputasi cepat, konsisten, dan mudah diinterpretasikan oleh manajer gudang.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Data Requirement & Goals Tabs -->
+                <div class="lg:col-span-6 bg-white p-8 rounded-2xl border border-borderAccent shadow-md space-y-6">
+                    
+                    <h3 class="text-2xl font-serif-title font-bold text-navy-800 border-b border-borderAccent pb-4">
+                        Data Kebutuhan & Tujuan Sistem
+                    </h3>
+
+                    <!-- Data Requirements -->
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-bold text-gold-600 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-database"></i> Data Yang Dikumpulkan & Diolah
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-3 bg-cream-100 rounded border border-borderAccent">
+                                <strong class="block font-bold text-navy-800">Riwayat Transaksi</strong>
+                                <span class="text-navy-600">Tanggal, nama produk, dan jumlah unit terjual.</span>
+                            </div>
+                            <div class="p-3 bg-cream-100 rounded border border-borderAccent">
+                                <strong class="block font-bold text-navy-800">Data Stok Barang</strong>
+                                <span class="text-navy-600">Jumlah stok awal dan sisa stok akhir per periode.</span>
+                            </div>
+                            <div class="p-3 bg-cream-100 rounded border border-borderAccent">
+                                <strong class="block font-bold text-navy-800">Harga Produk</strong>
+                                <span class="text-navy-600">Harga jual & harga beli untuk estimasi omzet.</span>
+                            </div>
+                            <div class="p-3 bg-cream-100 rounded border border-borderAccent">
+                                <strong class="block font-bold text-navy-800">Tren Waktu</strong>
+                                <span class="text-navy-600">Pola fluktuasi bulanan atau musiman.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Objectives -->
+                    <div class="space-y-3 pt-2">
+                        <h4 class="text-xs font-bold text-navy-800 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-bullseye"></i> 4 Tujuan Utama Sistem
+                        </h4>
+
+                        <div class="space-y-2 text-xs">
+                            <div class="flex items-center p-2.5 bg-navy-800 text-cream-50 rounded">
+                                <span class="w-6 h-6 rounded bg-gold-500 text-navy-900 font-bold flex items-center justify-center mr-3 text-xs">1</span>
+                                <span><strong>Otomatisasi Analisis:</strong> Memproses data historis tanpa hitungan manual.</span>
+                            </div>
+                            <div class="flex items-center p-2.5 bg-navy-800 text-cream-50 rounded">
+                                <span class="w-6 h-6 rounded bg-gold-500 text-navy-900 font-bold flex items-center justify-center mr-3 text-xs">2</span>
+                                <span><strong>Prediksi Akurat:</strong> Menghasilkan perkiraan penjualan periode berikutnya.</span>
+                            </div>
+                            <div class="flex items-center p-2.5 bg-navy-800 text-cream-50 rounded">
+                                <span class="w-6 h-6 rounded bg-gold-500 text-navy-900 font-bold flex items-center justify-center mr-3 text-xs">3</span>
+                                <span><strong>Optimasi Stok:</strong> Rekomendasi restock agar tidak overstock / understock.</span>
+                            </div>
+                            <div class="flex items-center p-2.5 bg-navy-800 text-cream-50 rounded">
+                                <span class="w-6 h-6 rounded bg-gold-500 text-navy-900 font-bold flex items-center justify-center mr-3 text-xs">4</span>
+                                <span><strong>Keputusan Bisnis:</strong> Mendukung pengambil keputusan secara data-driven.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 5: INTERACTIVE LIVE SIMULATION / REGRESSION CALCULATOR TOOL -->
+    <section id="simulasi" class="py-20 bg-cream-200 border-t border-borderAccent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-gold-600 bg-gold-500/10 px-3 py-1 rounded border border-gold-500/20">Fitur Interaktif Live</span>
+                <h2 class="text-3xl sm:text-4xl font-serif-title font-bold text-navy-800 mt-3 mb-4">
+                    Kalkulator Simulasi Prediksi Regresi
+                </h2>
+                <p class="text-navy-600 text-sm sm:text-base">
+                    Masukkan data historis penjualan produk UMKM Anda selama 4 bulan terakhir dan jumlah stok saat ini untuk menghitung proyeksi bulan depan secara real-time!
+                </p>
+            </div>
+
+            <!-- Calculator Layout Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Input Form Panel -->
+                <div class="lg:col-span-5 bg-white p-6 sm:p-8 rounded-xl border border-borderAccent shadow-md space-y-6">
+                    <div class="flex justify-between items-center border-b border-borderAccent pb-3">
+                        <h3 class="text-xl font-serif-title font-bold text-navy-800">Input Data Historis</h3>
+                        <span class="text-xs font-bold text-gold-600 bg-cream-100 px-2 py-1 rounded">Regresi Linier</span>
+                    </div>
+
+                    <form id="regressionForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-navy-700 uppercase tracking-wider mb-1">Nama Produk UMKM</label>
+                            <input type="text" id="productName" value="Kopi Susu Gula Aren 250ml" class="w-full px-3 py-2 text-sm border border-borderAccent rounded focus:ring-2 focus:ring-gold-500 focus:outline-none bg-cream-50" required>
+                        </div>
+
+                        <!-- 4 Month Sales Input -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-navy-700 uppercase tracking-wider mb-1">Penjualan Bulan 1</label>
+                                <input type="number" id="m1" value="120" class="w-full px-3 py-2 text-sm border border-borderAccent rounded focus:ring-2 focus:ring-gold-500 focus:outline-none bg-cream-50" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-navy-700 uppercase tracking-wider mb-1">Penjualan Bulan 2</label>
+                                <input type="number" id="m2" value="145" class="w-full px-3 py-2 text-sm border border-borderAccent rounded focus:ring-2 focus:ring-gold-500 focus:outline-none bg-cream-50" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-navy-700 uppercase tracking-wider mb-1">Penjualan Bulan 3</label>
+                                <input type="number" id="m3" value="160" class="w-full px-3 py-2 text-sm border border-borderAccent rounded focus:ring-2 focus:ring-gold-500 focus:outline-none bg-cream-50" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-navy-700 uppercase tracking-wider mb-1">Penjualan Bulan 4</label>
+                                <input type="number" id="m4" value="190" class="w-full px-3 py-2 text-sm border border-borderAccent rounded focus:ring-2 focus:ring-gold-500 focus:outline-none bg-cream-50" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-navy-700 uppercase tracking-wider mb-1">Sisa Stok Fisik Saat Ini (Unit)</label>
+                            <input type="number" id="currentStock" value="45" class="w-full px-3 py-2 text-sm border border-borderAccent rounded focus:ring-2 focus:ring-gold-500 focus:outline-none bg-cream-50" required>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 bg-navy-800 hover:bg-navy-900 text-gold-400 font-bold text-sm tracking-wider uppercase rounded transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calculator"></i> Hitung Prediksi Regresi
+                        </button>
+                    </form>
+
+                    <!-- Quick Sample Data Preset Buttons -->
+                    <div class="pt-2 border-t border-borderAccent">
+                        <span class="text-[11px] text-navy-500 font-semibold block mb-2">Gunakan Data Sampel Cepat:</span>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="loadPreset('trending')" class="text-xs bg-cream-100 hover:bg-cream-300 text-navy-800 px-2.5 py-1 rounded border border-borderAccent transition">
+                                <i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> Tren Naik
+                            </button>
+                            <button type="button" onclick="loadPreset('stable')" class="text-xs bg-cream-100 hover:bg-cream-300 text-navy-800 px-2.5 py-1 rounded border border-borderAccent transition">
+                                <i class="fa-solid fa-minus text-blue-600"></i> Stabil
+                            </button>
+                            <button type="button" onclick="loadPreset('highStock')" class="text-xs bg-cream-100 hover:bg-cream-300 text-navy-800 px-2.5 py-1 rounded border border-borderAccent transition">
+                                <i class="fa-solid fa-boxes-stacked text-amber-600"></i> Overstock Risk
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Results Panel & Chart -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- Prediction Result Cards -->
+                    <div class="bg-navy-800 text-cream-50 p-6 rounded-xl border border-gold-500/40 shadow-xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="text-xs font-bold text-gold-400 uppercase tracking-widest block">Hasil Analisis Forecasting Regresi</span>
+                                <h4 id="resProductName" class="text-2xl font-serif-title font-bold text-cream-50">Kopi Susu Gula Aren 250ml</h4>
+                            </div>
+                            <div id="statusBadge" class="px-3 py-1 rounded text-xs font-bold uppercase bg-emerald-500 text-navy-900">
+                                Restock Disarankan
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                            <div class="bg-navy-900/80 p-4 rounded-lg border border-navy-700">
+                                <span class="text-[11px] text-cream-300 uppercase tracking-wider block">Prediksi Sales Bulan 5</span>
+                                <span id="predictedSalesVal" class="text-3xl font-serif-title font-bold text-gold-400">210 Unit</span>
+                                <span class="text-[10px] text-cream-400 block mt-1">Formula Y = a + b(5)</span>
+                            </div>
+
+                            <div class="bg-navy-900/80 p-4 rounded-lg border border-navy-700">
+                                <span class="text-[11px] text-cream-300 uppercase tracking-wider block">Sisa Stok Saat Ini</span>
+                                <span id="currentStockVal" class="text-3xl font-serif-title font-bold text-cream-100">45 Unit</span>
+                                <span class="text-[10px] text-cream-400 block mt-1">Stok Gudang Aktif</span>
+                            </div>
+
+                            <div class="bg-navy-900/80 p-4 rounded-lg border border-navy-700">
+                                <span class="text-[11px] text-cream-300 uppercase tracking-wider block">Rekomendasi Restock</span>
+                                <span id="recommendedRestockVal" class="text-3xl font-serif-title font-bold text-emerald-400">165 Unit</span>
+                                <span class="text-[10px] text-cream-400 block mt-1">Optimalisasi Pengadaan</span>
+                            </div>
+                        </div>
+
+                        <div id="equationInfo" class="mt-4 pt-3 border-t border-navy-700 text-xs text-cream-300 font-mono">
+                            Rumus Regresi: Y = <span id="formulaA">92.5</span> + <span id="formulaB">23.5</span>(X)
+                        </div>
+                    </div>
+
+                    <!-- Chart Canvas Box -->
+                    <div class="bg-white p-6 rounded-xl border border-borderAccent shadow-md space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold uppercase tracking-wider text-navy-800">Visualisasi Regresi: Data Historis (Bln 1-4) vs Prediksi (Bln 5)</span>
+                            <span class="text-[11px] text-navy-500 font-mono">Chart.js Live Plot</span>
+                        </div>
+                        <div class="h-64 w-full">
+                            <canvas id="regressionChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 6: RANCANGAN SISTEM (INPUT, PROSES, OUTPUT) -->
+    <section id="rancangan" class="py-20 bg-cream-100 border-t border-borderAccent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-gold-600 bg-gold-500/10 px-3 py-1 rounded border border-gold-500/20">Arsitektur Alur Kerja</span>
+                <h2 class="text-3xl sm:text-4xl font-serif-title font-bold text-navy-800 mt-3 mb-4">
+                    Rancangan Alur Sistem Prediksi
+                </h2>
+                <p class="text-navy-600 text-sm sm:text-base">
+                    Proses transformasi berjenjang dari data mentah hingga menghasilkan rekomendasi keputusan pengadaan barang yang presisi.
+                </p>
+            </div>
+
+            <!-- Input - Proses - Output Pipeline Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Step 1: Input -->
+                <div class="bg-white p-8 rounded-xl border border-borderAccent shadow-sm relative hover:shadow-md transition">
+                    <div class="w-10 h-10 rounded bg-navy-800 text-gold-400 font-serif-title font-bold text-lg flex items-center justify-center mb-6">
+                        01
+                    </div>
+                    <span class="text-xs font-bold text-gold-600 uppercase tracking-widest block mb-1">Tahap Pertama</span>
+                    <h3 class="text-xl font-serif-title font-bold text-navy-800 mb-3">INPUT</h3>
+                    <p class="text-xs text-navy-600 leading-relaxed mb-4">
+                        Data riwayat transaksi penjualan terperinci dan data ketersediaan barang dimasukkan ke dalam sistem.
+                    </p>
+                    <ul class="space-y-2 text-xs text-navy-700 border-t border-gray-100 pt-3">
+                        <li class="flex items-center"><i class="fa-solid fa-angle-right text-gold-500 mr-2"></i> Tanggal Transaksi Penjualan</li>
+                        <li class="flex items-center"><i class="fa-solid fa-angle-right text-gold-500 mr-2"></i> Nama & Kategori Produk</li>
+                        <li class="flex items-center"><i class="fa-solid fa-angle-right text-gold-500 mr-2"></i> Jumlah Unit Terjual</li>
+                        <li class="flex items-center"><i class="fa-solid fa-angle-right text-gold-500 mr-2"></i> Data Sisa Stok Fisik</li>
+                    </ul>
+                </div>
+
+                <!-- Step 2: Proses -->
+                <div class="bg-navy-800 text-cream-50 p-8 rounded-xl border border-gold-500/40 shadow-md relative hover:shadow-lg transition">
+                    <div class="w-10 h-10 rounded bg-gold-500 text-navy-900 font-serif-title font-bold text-lg flex items-center justify-center mb-6">
+                        02
+                    </div>
+                    <span class="text-xs font-bold text-gold-400 uppercase tracking-widest block mb-1">Tahap Pemrosesan</span>
+                    <h3 class="text-xl font-serif-title font-bold text-cream-50 mb-3">PROSES</h3>
+                    <p class="text-xs text-cream-300 leading-relaxed mb-4">
+                        Sistem mengekstraksi tren data, memproses perhitungan matriks statistik, dan mengeksekusi rumus Regresi.
+                    </p>
+                    <ul class="space-y-2 text-xs text-cream-200 border-t border-navy-700 pt-3">
+                        <li class="flex items-center"><i class="fa-solid fa-check text-gold-400 mr-2"></i> Ekstraksi Tren Tren Musiman</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-gold-400 mr-2"></i> Hitung Intercept (a) & Slope (b)</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-gold-400 mr-2"></i> Simulasi Peramalan Sales ($Y$)</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-gold-400 mr-2"></i> Analisis Safety Stock Buffer</li>
+                    </ul>
+                </div>
+
+                <!-- Step 3: Output -->
+                <div class="bg-white p-8 rounded-xl border border-borderAccent shadow-sm relative hover:shadow-md transition">
+                    <div class="w-10 h-10 rounded bg-navy-800 text-gold-400 font-serif-title font-bold text-lg flex items-center justify-center mb-6">
+                        03
+                    </div>
+                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-1">Tahap Hasil</span>
+                    <h3 class="text-xl font-serif-title font-bold text-navy-800 mb-3">OUTPUT</h3>
+                    <p class="text-xs text-navy-600 leading-relaxed mb-4">
+                        Sistem menyajikan proyeksi penjualan kuantitatif beserta rekomendasi aksi restock nyata.
+                    </p>
+                    <ul class="space-y-2 text-xs text-navy-700 border-t border-gray-100 pt-3">
+                        <li class="flex items-center"><i class="fa-solid fa-angle-right text-emerald-600 mr-2"></i> Estimasi Angka Penjualan Masa Depan</li>
+                        <li class="flex items-center"><i class="fa-solid fa-angle-right text-emerald-600 mr-2"></i> Rekomendasi Jumlah Restock Tepat</li>
+                        <li class="flex items-center"><i class="fa-solid fa-angle-right text-emerald-600 mr-2"></i> Peringatan Risiko Overstock/Understock</li>
+                        <li class="flex items-center"><i class="fa-solid fa-angle-right text-emerald-600 mr-2"></i> Laporan Ringkasan Perencanaan Stok</li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 7: KEBUTUHAN SISTEM & DAMPAK IMPLEMENTASI -->
+    <section id="dampak" class="py-20 bg-cream-200 border-t border-borderAccent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                
+                <!-- Left Column: Kebutuhan Sistem -->
+                <div class="lg:col-span-6 space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-gold-600 bg-gold-500/10 px-3 py-1 rounded border border-gold-500/20">Spesifikasi Sistem</span>
+                        <h2 class="text-3xl font-serif-title font-bold text-navy-800 mt-2">
+                            Kebutuhan Fungsional & Non-Fungsional
+                        </h2>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-borderAccent overflow-hidden shadow-sm">
+                        <!-- Table Header -->
+                        <div class="bg-navy-800 text-cream-50 p-4 font-bold text-xs uppercase tracking-wider flex justify-between">
+                            <span>Kebutuhan Fungsional</span>
+                            <span>Deskripsi Modul</span>
+                        </div>
+                        <div class="divide-y divide-borderAccent text-xs">
+                            <div class="p-4 flex justify-between items-center">
+                                <span class="font-bold text-navy-800">CRUD Data Transaksi</span>
+                                <span class="text-navy-600">Tambah, Edit, Hapus, & Lihat riwayat penjualan</span>
+                            </div>
+                            <div class="p-4 flex justify-between items-center bg-cream-50">
+                                <span class="font-bold text-navy-800">Notifikasi Stok Kritis</span>
+                                <span class="text-navy-600">Peringatan otomatis saat stok di bawah batas minimal</span>
+                            </div>
+                            <div class="p-4 flex justify-between items-center">
+                                <span class="font-bold text-navy-800">Data Processing Engine</span>
+                                <span class="text-navy-600">Ekstraksi angka & pembersihan outlier data</span>
+                            </div>
+                            <div class="p-4 flex justify-between items-center bg-cream-50">
+                                <span class="font-bold text-navy-800">Modul Prediksi Sales</span>
+                                <span class="text-navy-600">Perhitungan Regresi linier per periode produk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Non Functional -->
+                    <div class="bg-white p-6 rounded-xl border border-borderAccent space-y-3 shadow-sm">
+                        <h4 class="text-xs font-bold text-navy-800 uppercase tracking-wider">Kebutuhan Non-Fungsional:</h4>
+                        <div class="grid grid-cols-2 gap-3 text-xs">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-circle-check text-gold-500"></i>
+                                <span><strong>User-Friendly:</strong> Tampilan intuitif</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-circle-check text-gold-500"></i>
+                                <span><strong>Cepat:</strong> Eksekusi hitung &lt; 1 detik</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-circle-check text-gold-500"></i>
+                                <span><strong>Akurat:</strong> Evaluasi eror minimal</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-circle-check text-gold-500"></i>
+                                <span><strong>Reliable:</strong> Akses stabil 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Dampak Implementasi & Revenue Projection -->
+                <div class="lg:col-span-6 bg-navy-800 text-cream-50 p-8 rounded-xl border border-gold-500/30 shadow-xl space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-gold-400">Hasil & Valuasi Bisnis</span>
+                        <h2 class="text-3xl font-serif-title font-bold text-cream-50 mt-2">
+                            Dampak Implementasi Pada UMKM
+                        </h2>
+                    </div>
+
+                    <p class="text-cream-300 text-sm leading-relaxed">
+                        Dengan mengadopsi sistem prediksi ini, UMKM dapat menekan biaya operasional akibat barang overstock hingga seminimal mungkin, sekaligus memaksimalkan pemenuhan permintaan pelanggan sehingga omzet diproyeksikan meningkat secara berkelanjutan.
+                    </p>
+
+                    <!-- Chart Proyeksi Omzet PDF -->
+                    <div class="bg-navy-900 p-5 rounded-lg border border-navy-700 space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-gold-400 uppercase tracking-wider">Proyeksi Pertumbuhan Omzet Bisnis</span>
+                            <span class="text-cream-400">(Sesuai Bar Chart PDF)</span>
+                        </div>
+                        <div class="h-48 w-full">
+                            <canvas id="impactChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-xs pt-2">
+                        <div class="p-3 bg-navy-900 rounded border border-navy-700">
+                            <span class="text-gold-400 font-bold block text-sm">Efisiensi Modal</span>
+                            <span class="text-cream-300">Menghindari modal mati pada barang yang mengendap lama.</span>
+                        </div>
+                        <div class="p-3 bg-navy-900 rounded border border-navy-700">
+                            <span class="text-emerald-400 font-bold block text-sm">Peningkatan Omzet</span>
+                            <span class="text-cream-300">Penjualan maksimal karena barang selalu tersedia.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 8: KESIMPULAN & FOOTER -->
+    <section class="py-16 bg-navy-900 text-cream-50 border-t border-navy-700">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+            
+            <div class="w-16 h-16 border-2 border-gold-500 rounded-full flex items-center justify-center mx-auto text-gold-500 text-2xl font-serif-title font-bold bg-navy-800">
+                P
+            </div>
+
+            <div class="space-y-3 max-w-3xl mx-auto">
+                <span class="text-xs font-bold uppercase tracking-widest text-gold-400">Rangkuman Akhir</span>
+                <h2 class="text-3xl sm:text-4xl font-serif-title font-bold text-cream-50 leading-tight">
+                    "Sistem prediksi penjualan ini akan mengubah cara UMKM bekerja, dari yang sebelumnya menebak-nebak stok menjadi perencana bisnis yang presisi berbasis data (data-driven)."
+                </h2>
+            </div>
+
+            <div class="pt-8 border-t border-navy-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream-400">
+                <div class="text-left">
+                    <p class="font-bold text-cream-100 uppercase tracking-wider">SISTEM PREDIKSI PENJUALAN</p>
+                    <p class="text-cream-300">Prediksi Kebutuhan Stok Berbasis Data Historis</p>
+                </div>
+
+                <div class="text-center sm:text-right bg-navy-800 px-4 py-3 rounded border border-navy-700">
+                    <p class="text-gold-400 font-bold text-sm">Irzi Atarr Denanta</p>
+                    <p class="text-cream-200">NPM: 29411007 • Tugas Individu AKS</p>
+                    <p class="text-[10px] text-cream-400 mt-0.5">Oktober 2026</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // Global Chart instances
+        let regressionChartInstance = null;
+        let miniChartInstance = null;
+        let impactChartInstance = null;
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Initialize Mini Chart in Hero
+        function initHeroMiniChart() {
+            const ctx = document.getElementById('heroMiniChart').getContext('2d');
+            miniChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Bln 1', 'Bln 2', 'Bln 3', 'Bln 4', 'Bln 5 (Prediksi)'],
+                    datasets: [
+                        {
+                            label: 'Historis Penjualan',
+                            data: [120, 145, 160, 190, null],
+                            borderColor: '#1B2545',
+                            backgroundColor: '#1B2545',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Proyeksi Regresi',
+                            data: [null, null, null, 190, 210],
+                            borderColor: '#C59B27',
+                            backgroundColor: '#C59B27',
+                            borderWidth: 3,
+                            borderDash: [5, 5],
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { font: { size: 10, family: 'Plus Jakarta Sans' } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#E2D9CF' },
+                            ticks: { font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize Impact Bar Chart (PDF Page 9 Style)
+        function initImpactChart() {
+            const ctx = document.getElementById('impactChart').getContext('2d');
+            impactChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
+                    datasets: [{
+                        label: 'Omzet & Efisiensi Stok',
+                        data: [8, 12, 16, 20],
+                        backgroundColor: '#C59B27',
+                        borderRadius: 6,
+                        borderWidth: 1,
+                        borderColor: '#E0B138'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 20,
+                            ticks: { color: '#FAF6F0', stepSize: 5 },
+                            grid: { color: '#212D52' }
+                        },
+                        x: {
+                            ticks: { color: '#FAF6F0' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Linear Regression Calculation Logic
+        function calculateLinearRegression(xArr, yArr, nextX) {
+            const n = xArr.length;
+            let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+
+            for (let i = 0; i < n; i++) {
+                sumX += xArr[i];
+                sumY += yArr[i];
+                sumXY += xArr[i] * yArr[i];
+                sumX2 += xArr[i] * xArr[i];
+            }
+
+            // Slope (b) = (n*sumXY - sumX*sumY) / (n*sumX2 - sumX^2)
+            const b = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            // Intercept (a) = (sumY - b*sumX) / n
+            const a = (sumY - b * sumX) / n;
+
+            const predictedY = a + b * nextX;
+
+            return {
+                a: Math.round(a * 100) / 100,
+                b: Math.round(b * 100) / 100,
+                predictedY: Math.round(predictedY)
+            };
+        }
+
+        // Update Interactive Chart in Simulator
+        function updateRegressionChart(salesHistory, predictedValue) {
+            const ctx = document.getElementById('regressionChart').getContext('2d');
+
+            const labels = ['Bln 1', 'Bln 2', 'Bln 3', 'Bln 4', 'Bln 5 (Prediksi)'];
+            const actualData = [...salesHistory, null];
+            const predictedLine = [null, null, null, salesHistory[3], predictedValue];
+
+            if (regressionChartInstance) {
+                regressionChartInstance.destroy();
+            }
+
+            regressionChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Penjualan Historis',
+                            data: actualData,
+                            borderColor: '#1B2545',
+                            backgroundColor: '#1B2545',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#1B2545',
+                            tension: 0.2
+                        },
+                        {
+                            label: 'Garis Hasil Prediksi Regresi',
+                            data: predictedLine,
+                            borderColor: '#C59B27',
+                            backgroundColor: 'rgba(197, 155, 39, 0.2)',
+                            borderWidth: 3,
+                            borderDash: [6, 6],
+                            pointRadius: 8,
+                            pointBackgroundColor: '#C59B27',
+                            fill: true,
+                            tension: 0.2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold' } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: { color: '#E2D9CF' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Handle Form Submission
+        document.getElementById('regressionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const pName = document.getElementById('productName').value;
+            const m1 = parseFloat(document.getElementById('m1').value);
+            const m2 = parseFloat(document.getElementById('m2').value);
+            const m3 = parseFloat(document.getElementById('m3').value);
+            const m4 = parseFloat(document.getElementById('m4').value);
+            const currStock = parseFloat(document.getElementById('currentStock').value);
+
+            const xValues = [1, 2, 3, 4];
+            const yValues = [m1, m2, m3, m4];
+
+            const result = calculateLinearRegression(xValues, yValues, 5);
+            const predictedY = Math.max(0, result.predictedY);
+            const recommendedRestock = Math.max(0, predictedY - currStock);
+
+            // Update DOM Elements
+            document.getElementById('resProductName').innerText = pName;
+            document.getElementById('predictedSalesVal').innerText = `${predictedY} Unit`;
+            document.getElementById('currentStockVal').innerText = `${currStock} Unit`;
+            document.getElementById('recommendedRestockVal').innerText = `${recommendedRestock} Unit`;
+            document.getElementById('formulaA').innerText = result.a;
+            document.getElementById('formulaB').innerText = result.b >= 0 ? `+ ${result.b}` : `- ${Math.abs(result.b)}`;
+
+            // Badge Status Logic
+            const badge = document.getElementById('statusBadge');
+            if (currStock >= predictedY) {
+                badge.className = "px-3 py-1 rounded text-xs font-bold uppercase bg-amber-400 text-navy-900";
+                badge.innerText = "Stok Cukup (Bebas Restock)";
+            } else if (recommendedRestock > 100) {
+                badge.className = "px-3 py-1 rounded text-xs font-bold uppercase bg-emerald-400 text-navy-900";
+                badge.innerText = "Restock Prioritas Tinggi";
+            } else {
+                badge.className = "px-3 py-1 rounded text-xs font-bold uppercase bg-gold-500 text-navy-900";
+                badge.innerText = "Restock Disarankan";
+            }
+
+            // Update Chart
+            updateRegressionChart([m1, m2, m3, m4], predictedY);
+        });
+
+        // Preset Data Buttons Helper
+        function loadPreset(type) {
+            if (type === 'trending') {
+                document.getElementById('productName').value = "Kopi Susu Gula Aren 250ml";
+                document.getElementById('m1').value = 120;
+                document.getElementById('m2').value = 145;
+                document.getElementById('m3').value = 160;
+                document.getElementById('m4').value = 190;
+                document.getElementById('currentStock').value = 45;
+            } else if (type === 'stable') {
+                document.getElementById('productName').value = "Keripik Pisang Lampung 200g";
+                document.getElementById('m1').value = 80;
+                document.getElementById('m2').value = 82;
+                document.getElementById('m3').value = 85;
+                document.getElementById('m4').value = 84;
+                document.getElementById('currentStock').value = 30;
+            } else if (type === 'highStock') {
+                document.getElementById('productName').value = "Kaos T-Shirt Sablon Premium";
+                document.getElementById('m1').value = 150;
+                document.getElementById('m2').value = 130;
+                document.getElementById('m3').value = 110;
+                document.getElementById('m4').value = 95;
+                document.getElementById('currentStock').value = 200;
+            }
+
+            // Trigger submit event
+            document.getElementById('regressionForm').dispatchEvent(new Event('submit'));
+        }
+
+        // Initialize on Load
+        window.onload = function() {
+            initHeroMiniChart();
+            initImpactChart();
+            // Run default prediction calculation
+            document.getElementById('regressionForm').dispatchEvent(new Event('submit'));
+        };
+    </script>
+
+</body>
+</html>
